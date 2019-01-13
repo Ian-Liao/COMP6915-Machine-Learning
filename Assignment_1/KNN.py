@@ -13,33 +13,27 @@ def knn_classifier(test, train_set, labels, k=3):
     labels: labels for the training data
     k: k value in KNN, the default value is 3
     '''
-    # TODO: remove these lines below
-    #dataSetSize = dataset.shape[0]
-    # tile方法是在列向量vecX，datasetSize次，行向量vecX1次叠加
-    #diffMat = tile(vecX,(dataSetSize,1)) - dataset
-    #sqDiffMat = diffMat ** 2
-    #sqDistances = sqDiffMat.sum(axis=1)   # axis=0 是列相加,axis=1是行相加
-    #distances = sqDistances**0.5
 
     distances = EuclideanDistance(test, train_set)
-    # print('vecX向量到数据集各点距离：\n'+str(distances))
+    # print('the distance between vector test and each of train_set:\n'+str(distances))
 
     sortedDistIndexs = distances.argsort(axis=0)  # sort the distances in ascending order
     # print(sortedDistIndicies)
 
-    classCount = {}   # 统计前k个类别出现频率
+    classCount = {}   # get the classes of first k nodes
     for i in range(k):
         votelabel = labels[sortedDistIndexs[i]]
-        classCount[votelabel] = classCount.get(votelabel,0) + 1 #统计键值
-    # 类别频率出现最高的点,itemgetter(0)按照key排序，itemgetter(1)按照value排序
-    sortedClassCount = sorted(classCount.items(),key=operator.itemgetter(1),reverse=True)
-    # print(str(vecX)+'KNN的投票决策结果：\n'+str(sortedClassCount[0][0]))
+        classCount[votelabel] = classCount.get(votelabel, 0) + 1 # count appearance based on class
+    # get the most likely class, itemgetter(0) means sorted by key, itemgetter(1) means sorted by value
+    sortedClassCount = sorted(classCount.items(), key=operator.itemgetter(1), reverse=True)
+    # print(str(vecX)+'KNN decision for this unseen instance：\n'+str(sortedClassCount[0][0]))
     return sortedClassCount[0][0]
 
 def EuclideanDistance(test, train_set):
     # Step 1.get row and col of train_set
     row, col = train_set.shape
     # Step 2.calculate difference between test data and each vector in train_set
+    # tile function repeats vector test 'row' times on vertical direction and 1 time on horizontal direstion
     print(tile(test, (row, 1)))
     differences = tile(test, (row, 1)) - train_set
     # Step 3.calculate power of difference
