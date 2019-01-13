@@ -11,15 +11,15 @@ def knn_classifier(test, train_set, labels, k=3):
     test: input vector, data to be tested
     train_set: training data extracted from train.tsv
     labels: labels for the training data
-    k:k value in KNN, the default value is 3
+    k: k value in KNN, the default value is 3
     '''
     # TODO: remove these lines below
-    dataSetSize = dataset.shape[0]
+    #dataSetSize = dataset.shape[0]
     # tile方法是在列向量vecX，datasetSize次，行向量vecX1次叠加
-    diffMat = tile(vecX,(dataSetSize,1)) - dataset
-    sqDiffMat = diffMat ** 2
-    sqDistances = sqDiffMat.sum(axis=1)   # axis=0 是列相加,axis=1是行相加
-    distances = sqDistances**0.5
+    #diffMat = tile(vecX,(dataSetSize,1)) - dataset
+    #sqDiffMat = diffMat ** 2
+    #sqDistances = sqDiffMat.sum(axis=1)   # axis=0 是列相加,axis=1是行相加
+    #distances = sqDistances**0.5
 
     distances = EuclideanDistance(test, train_set)
     # print('vecX向量到数据集各点距离：\n'+str(distances))
@@ -40,27 +40,28 @@ def EuclideanDistance(test, train_set):
     # Step 1.get row and col of train_set
     row, col = train_set.shape
     # Step 2.calculate difference between test data and each vector in train_set
+    print(tile(test, (row, 1)))
     differences = tile(test, (row, 1)) - train_set
     # Step 3.calculate power of difference
     diff_power = differences ** 2
     # Step 4.calculate Euclidean Distance
-    euc_dis = diff_power.sum(axis=1) ** 0.5
+    euc_dis = diff_power.sum(axis=1) ** 0.5 # axis=0 means sum on column, axis=1 means sum on row
     return euc_dis
 
 def prepare_data(train_data):
     train_data = array(train_data[1:])
     attributes, labels = hsplit(train_data, [9])
+    attributes = attributes.astype(float)
     labels = [label[0] for label in labels]
     return attributes, labels
 
 
 if __name__ == "__main__":
-    # from ipdb import set_trace
-    # set_trace()
+    #from ipdb import set_trace
     print('sys.argv is ', sys.argv)
     train_file = sys.argv[1]
     test_file = sys.argv[2]
-    k  = sys.argv[3]
+    k  = int(sys.argv[3])
     train_data = []
     with open(train_file) as tsv:
         reader = csv.reader(tsv, delimiter='\t')
@@ -75,7 +76,8 @@ if __name__ == "__main__":
     attributes, labels = prepare_data(train_data)
     print('attributes: ', attributes, ' labels: ', labels)
     result = []
-    for data in test_data[1:]:
+    test_data = [[float(d) for d in data] for data in test_data[1:]]
+    for data in test_data:
         res = knn_classifier(data, attributes, labels, k)
         result.append(res)
 
