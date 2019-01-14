@@ -27,14 +27,14 @@ def knn_classifier(test, train_set, labels, k=3):
     # get the most likely class, itemgetter(0) means sorted by key, itemgetter(1) means sorted by value
     sortedClassCount = sorted(classCount.items(), key=operator.itemgetter(1), reverse=True)
     # print(str(vecX)+'KNN decision for this unseen instance：\n'+str(sortedClassCount[0][0]))
-    return sortedClassCount[0][0]
+    return sortedClassCount[0]
 
 def EuclideanDistance(test, train_set):
     # Step 1.get row and col of train_set
     row, col = train_set.shape
     # Step 2.calculate difference between test data and each vector in train_set
     # tile function repeats vector test 'row' times on vertical direction and 1 time on horizontal direstion
-    print(tile(test, (row, 1)))
+    # print(tile(test, (row, 1)))
     differences = tile(test, (row, 1)) - train_set
     # Step 3.calculate power of difference
     diff_power = differences ** 2
@@ -52,7 +52,7 @@ def prepare_data(train_data):
 
 if __name__ == "__main__":
     #from ipdb import set_trace
-    print('sys.argv is ', sys.argv)
+    #print('sys.argv is ', sys.argv)
     train_file = sys.argv[1]
     test_file = sys.argv[2]
     k  = int(sys.argv[3])
@@ -68,12 +68,12 @@ if __name__ == "__main__":
             test_data.append(row)
 
     attributes, labels = prepare_data(train_data)
-    print('attributes: ', attributes, ' labels: ', labels)
+    #print('attributes: ', attributes, ' labels: ', labels)
     result = []
     test_data = [[float(d) for d in data] for data in test_data[1:]]
     for data in test_data:
         res = knn_classifier(data, attributes, labels, k)
         result.append(res)
+        print(res[0],'\t',str('{0:.2f}'.format(res[1]/k)))
 
-    print(result)
 
