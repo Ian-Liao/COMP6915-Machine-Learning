@@ -10,6 +10,10 @@ import csv
 
 class KFoldCrossValidation(object):
 
+    def __init__(self, k_fold, k_max):
+        self.k_fold = k_fold
+        self.k_max = k_max
+
     def split(self, array, k, index):
         # TODO split class 0 into k folds and class 1 into k folds separately and then combine
         # them to training set and testing set
@@ -20,15 +24,15 @@ class KFoldCrossValidation(object):
         training = np.concatenate((array[:start], array[end:]))
         return training, testing
 
-    def KFoldCrossValidation(self, learner, k_fold, K_MAX, features, targets):
+    def KFoldCrossValidation(self, learner, features, targets):
         train_folds_score = []
         validation_folds_score = []
-        for index in range(k_fold):
-            training_set, testing_set = self.split(features, k_fold, index)
-            training_targets, testing_targets = self.split(targets, k_fold, index)
+        for index in range(self.k_fold):
+            training_set, testing_set = self.split(features, self.k_fold, index)
+            training_targets, testing_targets = self.split(targets, self.k_fold, index)
             col_num = features.shape[1]
             for cn in range(1, col_num+1):
-                for k in range(3, K_MAX, 2):
+                for k in range(3, self.k_max, 2):
                     knn = learner(n_neighbors = k)
                     training_predicted = knn.fit(training_set[:, :cn], training_targets)
                     validation_predicted = knn.predict(testing_set[:, :cn])
@@ -75,8 +79,8 @@ if __name__ == "__main__":
     unique, counts = unique(targets, return_counts=True)
     counter = dict(zip(unique, counts))
     print('counter: ', counter)
-    kfcv = KFoldCrossValidation()
     k_fold = 5
-    K_MAX = 17
-    kfcv.KFoldCrossValidation(KNeighborsClassifier, k_fold, K_MAX, features, targets)
+    k_max = 17
+    kfcv = KFoldCrossValidation(k_fold=k_fold, k_max=k_max)
+    kfcv.KFoldCrossValidation(KNeighborsClassifier, features, targets)
 
