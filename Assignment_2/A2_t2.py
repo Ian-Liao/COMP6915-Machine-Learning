@@ -20,18 +20,18 @@ class KFoldCrossValidation(object):
         training = np.concatenate((array[:start], array[end:]))
         return training, testing
 
-    def KFoldCrossValidation(self, learner, k, K_MAX, features, targets):
+    def KFoldCrossValidation(self, learner, k_fold, K_MAX, features, targets):
         train_folds_score = []
         validation_folds_score = []
-        for index in range(k):
-            training_set, testing_set = self.split(features, k, index)
-            training_targets, testing_targets = self.split(targets, k, index)
+        for index in range(k_fold):
+            training_set, testing_set = self.split(features, k_fold, index)
+            training_targets, testing_targets = self.split(targets, k_fold, index)
             col_num = features.shape[1]
-            for cn in col_num:
+            for cn in range(col_num):
                 for k in range(3, K_MAX, 2):
-                    learner.fit(training_set, training_targets)
-                    training_predicted = learner.predict(training_set)
-                    validation_predicted = learner.predict(validation_set)
+                    knn = learner(n_neighbors = k)
+                    training_predicted = knn.fit(training_set, training_targets)
+                    validation_predicted = knn.predict(testing_set)
                     train_folds_score.append(metrics.accuracy_score(training_targets, training_predicted))
                     validation_folds_score.append(metrics.accuracy_score(validation_targets, validation_predicted))
         return train_folds_score, validation_folds_score
@@ -48,8 +48,6 @@ def prepare_data(train_data):
     features = train_data.iloc[:, :-1]
     targets = train_data.iloc[:, -1:]
     features = features.reindex(features.var().sort_values().index, axis=1)
-    print("***features: ", features)
-    print("***targets: ", targets)
     # Create VarianceThreshold object with a variance with a threshold of 0.1
     thresholder = VarianceThreshold(threshold=.1)
 
