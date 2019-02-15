@@ -3,6 +3,9 @@ from numpy import *
 import pandas as pd
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.feature_selection import VarianceThreshold
+from sklearn.metrics import roc_curve
+from sklearn.metrics import roc_auc_score
+from matplotlib import pyplot
 
 import sys
 import csv
