@@ -27,11 +27,11 @@ class KFoldCrossValidation(object):
             training_set, testing_set = self.split(features, k_fold, index)
             training_targets, testing_targets = self.split(targets, k_fold, index)
             col_num = features.shape[1]
-            for cn in range(col_num):
+            for cn in range(1, col_num+1):
                 for k in range(3, K_MAX, 2):
                     knn = learner(n_neighbors = k)
-                    training_predicted = knn.fit(training_set, training_targets)
-                    validation_predicted = knn.predict(testing_set)
+                    training_predicted = knn.fit(training_set[:, :cn], training_targets)
+                    validation_predicted = knn.predict(testing_set[:, :cn])
                     train_folds_score.append(metrics.accuracy_score(training_targets, training_predicted))
                     validation_folds_score.append(metrics.accuracy_score(validation_targets, validation_predicted))
         return train_folds_score, validation_folds_score
