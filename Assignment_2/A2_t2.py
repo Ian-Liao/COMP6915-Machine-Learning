@@ -47,7 +47,8 @@ def prepare_data(train_data):
     # split features and targets
     features = train_data.iloc[:, :-1]
     targets = train_data.iloc[:, -1:]
-    features = features.reindex(features.var().sort_values().index, axis=1)
+    # Sort features by variance in descending order
+    features = features.reindex(features.var().sort_values(ascending=False).index, axis=1)
     # Create VarianceThreshold object with a variance with a threshold of 0.1
     thresholder = VarianceThreshold(threshold=.1)
 
@@ -68,7 +69,6 @@ if __name__ == "__main__":
         for row in reader:
             observations.append(row)
 
-    set_trace()
     features, targets = prepare_data(observations)
 
     # count the number of class 0 and class 1
