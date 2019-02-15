@@ -1,6 +1,8 @@
 import numpy as np
 from numpy import *
 import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.feature_selection import VarianceThreshold
 
 import sys
 import csv
@@ -8,53 +10,59 @@ import csv
 
 class KFoldCrossValidation(object):
 
-    def split(self, vector, k, index):
-        size = vector.shape[0]
-        start = (size/k) * index
-        end = (size/k) * (index+1)
-        validation = vector[start:end]
-        if str(type(vector)) == "<class 'scipy.sparse.csr.csr_matrix'>":
-            indices = range(start, end)
-            mask = np.ones(vector.shape[0], dtype=bool)
-            mask[indices] = False
-            training = vector[mask]
-        elif str(type(vector)) == "<type 'numpy.ndarray'>":
-            training = np.concatenate((vector[:start], vector[end:]))
+    def split(self, array, k, index):
+        # TODO split class 0 into k folds and class 1 into k folds separately and then combine
+        # them to training set and testing set
+        size = array.shape[0]
+        start = (size//k) * index
+        end = (size//k) * (index+1)
+        testing = array[start:end]
+        training = np.concatenate((array[:start], array[end:]))
         return training, testing
 
-    def KFoldCrossValidation(self, learner, k, examples, labels):
+    def KFoldCrossValidation(self, learner, k, K_MAX, features, targets):
         train_folds_score = []
         validation_folds_score = []
         for index in range(k):
-            training_set, testing_set = self.split(examples, k, index)
-            training_labels, testing_labels = self.split(labels, k, index)
-            learner.fit(training_set, training_labels)
-            training_predicted = learner.predict(training_set)
-            validation_predicted = learner.predict(validation_set)
-            train_folds_score.append(metrics.accuracy_score(training_labels, training_predicted))
-            validation_folds_score.append(metrics.accuracy_score(validation_labels, validation_predicted))
+            training_set, testing_set = self.split(features, k, index)
+            training_targets, testing_targets = self.split(targets, k, index)
+            col_num = features.shape[1]
+            for cn in col_num:
+                for k in range(3, K_MAX, 2):
+                    learner.fit(training_set, training_targets)
+                    training_predicted = learner.predict(training_set)
+                    validation_predicted = learner.predict(validation_set)
+                    train_folds_score.append(metrics.accuracy_score(training_targets, training_predicted))
+                    validation_folds_score.append(metrics.accuracy_score(validation_targets, validation_predicted))
         return train_folds_score, validation_folds_score
 
 
 def prepare_data(train_data):
     train_data = array(train_data)
-    # attributes, labels = hsplit(train_data, [-1])
+    # attributes, labels = hsplit(train_data, [-2])
     train_data = train_data.astype(float)
-    train_data = pd.DataFrame(train_data)
+    train_data = pd.DataFrame(train_data) # convert data type from numpy.array to pandas.DataFrame
     print(train_data.shape)
-    var_list, cov_list = [], []
-    feature_num = train_data.shape[1] - 1
-    for i in range(feature_num):
-        corr = train_data[[i, feature_num]].corr()
-        var_list.append((i, train_data[i].var(), corr[feature_num][i]))
-    var_list = [var for var in var_list if var[1] > 1e-4 and abs(var[2]) >= 1e-2]
-    index_set = {var[0] for var in var_list}
-    print("var_list length: ", len(var_list))
-    print(index_set)
-    features = train_data
-    return train_data
+
+    # split features and targets
+    features = train_data.iloc[:, :-1]
+    targets = train_data.iloc[:, -1:]
+    features = features.reindex(features.var().sort_values().index, axis=1)
+    print("***features: ", features)
+    print("***targets: ", targets)
+    # Create VarianceThreshold object with a variance with a threshold of 0.1
+    thresholder = VarianceThreshold(threshold=.1)
+
+    # Conduct variance thresholding
+    features = thresholder.fit_transform(features)
+
+    # TODO consider add correlation filter
+    print("***columns: ", features.shape[1])
+    # filter features by the variance and correlation
+    return features, targets.values
 
 if __name__ == "__main__":
+    from ipdb import set_trace
     observation_file = sys.argv[1]
     observations = []
     with open(observation_file) as tsv:
@@ -62,4 +70,15 @@ if __name__ == "__main__":
         for row in reader:
             observations.append(row)
 
-    train_data = prepare_data(observations)
+    set_trace()
+    features, targets = prepare_data(observations)
+
+    # count the number of class 0 and class 1
+    unique, counts = unique(targets, return_counts=True)
+    counter = dict(zip(unique, counts))
+    print('counter: ', counter)
+    kfcv = KFoldCrossValidation()
+    k_fold = 5
+    K_MAX = 17
+    kfcv.KFoldCrossValidation(KNeighborsClassifier, k_fold, K_MAX, features, targets)
+
