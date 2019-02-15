@@ -14,22 +14,38 @@ class KFoldCrossValidation(object):
         self.k_fold = k_fold
         self.k_max = k_max
 
-    def split(self, array, k, index):
-        # TODO split class 0 into k folds and class 1 into k folds separately and then combine
-        # them to training set and testing set
-        size = array.shape[0]
-        start = (size//k) * index
-        end = (size//k) * (index+1)
-        testing = array[start:end]
-        training = np.concatenate((array[:start], array[end:]))
+    def split(self, array, k, index, class_boundary):
+        """ split class 0 into k folds and class 1 into k folds separately and then combine
+         them to training set and testing set
+        """
+
+        set_trace()
+        class1_set, class0_set = array[:class_boundary], array[class_boundary:]
+        size1 = class1_set.shape[0]
+        start1 = (size1//k) * index
+        end1 = (size1//k) * (index+1)
+        testing1 = class1_set[start1:end1]
+        training1 = np.concatenate((class1_set[:start1], class1_set[end1:]))
+
+        size0 = class0_set.shape[0]
+        start0 = (size0//k) * index
+        end0 = (size0//k) * (index+1)
+        testing0 = class0_set[start0:end0]
+        training0 = np.concatenate((class0_set[:start0], class0_set[end0:]))
+
+        training = np.concatenate((training0, training1))
+        testing = np.concatenate((testing0, testing1))
         return training, testing
 
     def KFoldCrossValidation(self, learner, features, targets):
         train_folds_score = []
         validation_folds_score = []
         for index in range(self.k_fold):
-            training_set, testing_set = self.split(features, self.k_fold, index)
-            training_targets, testing_targets = self.split(targets, self.k_fold, index)
+            unique, counts = np.unique(targets, return_counts=True)
+            counter = dict(zip(unique, counts))
+            # print('counter: ', counter)
+            training_targets, testing_targets = self.split(targets, self.k_fold, index, counter[1])
+            training_set, testing_set = self.split(features, self.k_fold, index, counter[1])
             col_num = features.shape[1]
             for cn in range(1, col_num+1):
                 for k in range(3, self.k_max, 2):
@@ -61,8 +77,8 @@ def prepare_data(train_data):
 
     # TODO consider add correlation filter
     print("***columns: ", features.shape[1])
-    # filter features by the variance and correlation
-    return features, targets.values
+    # Convert targets from DataFrames to numpy.array and the value type from float to int
+    return features, targets.values.astype(int)
 
 if __name__ == "__main__":
     from ipdb import set_trace
@@ -76,9 +92,6 @@ if __name__ == "__main__":
     features, targets = prepare_data(observations)
 
     # count the number of class 0 and class 1
-    unique, counts = unique(targets, return_counts=True)
-    counter = dict(zip(unique, counts))
-    print('counter: ', counter)
     k_fold = 5
     k_max = 17
     kfcv = KFoldCrossValidation(k_fold=k_fold, k_max=k_max)
