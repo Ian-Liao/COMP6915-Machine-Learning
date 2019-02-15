@@ -5,6 +5,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.metrics import roc_curve
 from sklearn.metrics import roc_auc_score
+from sklearn.metrics import precision_recall_curve
 from matplotlib import pyplot
 
 import sys
@@ -15,7 +16,10 @@ class KFoldCrossValidation(object):
 
     def __init__(self, k_fold, k_max):
         self.k_fold = k_fold
+        self.k_min = k_min
         self.k_max = k_max
+        self.k_step = k_step
+        self.offset = 1
 
     def split(self, array, k, index, class_boundary):
         """ split class 0 into k folds and class 1 into k folds separately and then combine
@@ -50,9 +54,10 @@ class KFoldCrossValidation(object):
             training_targets, testing_targets = self.split(targets, self.k_fold, index, counter[1])
             training_set, testing_set = self.split(features, self.k_fold, index, counter[1])
             col_num = features.shape[1]
-            for cn in range(1, col_num+1):
-                for k in range(3, self.k_max, 2):
+            for cn in range(self.offset, col_num+self.offset):
+                for k in range(self.k_min, self.k_max, self.k_step):
                     knn = learner(n_neighbors = k)
+                    # fit a model
                     training_predicted = knn.fit(training_set[:, :cn], training_targets)
                     validation_predicted = knn.predict(testing_set[:, :cn])
                     train_folds_score.append(metrics.accuracy_score(training_targets, training_predicted))
@@ -94,9 +99,10 @@ if __name__ == "__main__":
 
     features, targets = prepare_data(observations)
 
-    # count the number of class 0 and class 1
     k_fold = 5
+    k_min = 3
     k_max = 17
-    kfcv = KFoldCrossValidation(k_fold=k_fold, k_max=k_max)
+    k_step = 2
+    kfcv = KFoldCrossValidation(k_fold=k_fold, k_min=k_min, k_max=k_max, k_step=k_step)
     kfcv.KFoldCrossValidation(KNeighborsClassifier, features, targets)
 
