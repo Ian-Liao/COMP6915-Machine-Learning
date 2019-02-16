@@ -1,9 +1,10 @@
+import sys
+import csv
+
 import pandas as pd
 import numpy as np
 from numpy import *
 
-import sys
-import csv
 
 def calculate_metrics(labels, data, total_predicted, total_observed):
     """calculate over accuracy, precision, recall, specificity and FDR"""
