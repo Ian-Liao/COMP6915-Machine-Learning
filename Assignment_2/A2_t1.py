@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import *
+import pandas as pd
 
 import sys
 import csv
@@ -41,20 +42,28 @@ def prepare_data(matrix_data):
     return labels, data, total_predicted, total_observed
 
 if __name__ == "__main__":
-    # from ipdb import set_trace
-    # set_trace()
-    confusion_matrix = sys.argv[1]
-    matrix_data = []
-    with open(confusion_matrix) as tsv:
-        reader = csv.reader(tsv, delimiter='\t')
-        for row in reader:
-            matrix_data.append(row)
+    from pandas import read_csv
 
+    # Reading data from file
+    confusion_matrix = sys.argv[1]
+    D = read_csv(confusion_matrix,sep="\t",header=None)
+
+    rows = D.shape[0] - 1 # number of rows of data is one less than the number of the rows of the file
+    matrix_data = D.values  # converingDataframe to numpy array
+
+    # Calling the functions to calculate
     labels, data, total_predicted, total_observed = prepare_data(matrix_data)
     precision, recall, specificity, FDR, accuracy = calculate_metrics(labels, data, total_predicted, total_observed)
-    print(precision)
-    print(recall)
-    print(specificity)
-    print(FDR)
-    print(accuracy)
 
+    # printing the Accuracy
+    print("Ac {0:0.2f}".format(accuracy))
+
+    # Forming names for Columns and Rows
+    nameColumn = np.array(["P","R","Sp","FDR"])
+    nameRows = pd.Series(D.iloc[0,1:].reset_index(drop=True).tolist())
+    nameRows = pd.Series(nameRows)
+
+    # prepare final result to print by concatenating precision,recall,specificity and FDR
+    finaltable = np.concatenate((precision, recall, specificity, FDR),axis=0).reshape(4,rows).T
+    result = pd.DataFrame(data=finaltable,index=nameRows,columns=nameColumn)
+    print(result.round(2))
