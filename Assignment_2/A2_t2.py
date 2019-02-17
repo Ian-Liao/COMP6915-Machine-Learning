@@ -14,7 +14,7 @@ import csv
 
 class KFoldCrossValidation(object):
 
-    def __init__(self, k_fold, k_max):
+    def __init__(self, k_fold, k_min, k_max, k_step):
         self.k_fold = k_fold
         self.k_min = k_min
         self.k_max = k_max
@@ -26,7 +26,6 @@ class KFoldCrossValidation(object):
          them to training set and testing set
         """
 
-        set_trace()
         class1_set, class0_set = array[:class_boundary], array[class_boundary:]
         size1 = class1_set.shape[0]
         start1 = (size1//k) * index
@@ -45,24 +44,46 @@ class KFoldCrossValidation(object):
         return training, testing
 
     def KFoldCrossValidation(self, learner, features, targets):
+        col_num = features.shape[1]
+        # score_matrix stores scores for different KNN and features selection
+        score_matrix = pd.DataFrame(np.zeros((col_num, self.k_max)))
+
         train_folds_score = []
         validation_folds_score = []
         for index in range(self.k_fold):
             unique, counts = np.unique(targets, return_counts=True)
             counter = dict(zip(unique, counts))
             # print('counter: ', counter)
-            training_targets, testing_targets = self.split(targets, self.k_fold, index, counter[1])
-            training_set, testing_set = self.split(features, self.k_fold, index, counter[1])
-            col_num = features.shape[1]
+            y_train, y_test = self.split(targets, self.k_fold, index, counter[1])
+            X_train, X_test = self.split(features, self.k_fold, index, counter[1])
             for cn in range(self.offset, col_num+self.offset):
                 for k in range(self.k_min, self.k_max, self.k_step):
                     knn = learner(n_neighbors = k)
                     # fit a model
-                    training_predicted = knn.fit(training_set[:, :cn], training_targets)
-                    validation_predicted = knn.predict(testing_set[:, :cn])
-                    train_folds_score.append(metrics.accuracy_score(training_targets, training_predicted))
-                    validation_folds_score.append(metrics.accuracy_score(validation_targets, validation_predicted))
-        return train_folds_score, validation_folds_score
+                    training_predicted = knn.fit(X_train[:, :cn], y_train)
+                    validation_predicted = knn.predict(X_test[:, :cn])
+                    accuracy = knn.score(X_test, y_test)
+                    # store the cummulativescore of KNN for each fold
+                    score_matrix.iloc[cn, k] += accuracy
+
+        score_matrix = score_matrix / self.k_fold
+        print(score_matrix)
+        max_score = 0.0
+        best_feature_num, best_k_num = 0, 0
+        for i in range(col_num):
+            for j in range(self.k_max - 1):
+                if (score_matrix.iloc[i, j] > max_score):
+                    best_feature_num = i + 1
+                    best_k_num = j + 1
+                    max_score = score_matrix.iloc[i, j]
+
+        print(
+            "The best number of features is {}, The best number of neighbors is {}".format(
+                best_feature_num,
+                best_k_num))
+        print(
+            "The accuracy for aforementioned values is: {0:.4f}".format(max_score))
+        return best_feature_num, best_k_num
 
 
 def prepare_data(train_data):
