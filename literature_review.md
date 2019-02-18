@@ -2,7 +2,9 @@ Feb 18 - Apr 5 Literature Review Schedule
 ---
 
 The plan below is basically follow the steps of the [MUN process]
+
 [MUN process]: https://www.mun.ca/writingcentre/docs/ReviewingAnalyzingLiterature.pdf
+
 1. Feb 18-22: Find and read the articles
 2. Feb 23-28: Write headings on paper/Re-read & revise our headings
 3. Mar 1-7: Create a written overview of our own
