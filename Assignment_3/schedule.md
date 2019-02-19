@@ -20,9 +20,9 @@ We both do the it separetly and whenever both models are ready we can compare th
     
 #### Plan:
 - Feb 19 
--- Data preparation:
---- Selecting some features by correlation
---- Scale the features
+	-- Data preparation:
+	-- Selecting some features by correlation
+	-- Scale the features
 - Feb 20 - 21
 -- Apply KNN:
 --- Prepare the AUPRC 
