@@ -19,7 +19,7 @@ We both do the it separetly and whenever both models are ready we can compare th
  
     
 #### Plan:
-- Feb 19 
+- Feb 19<br> 
 	-- Data preparation:
 	-- Selecting some features by correlation
 	-- Scale the features
