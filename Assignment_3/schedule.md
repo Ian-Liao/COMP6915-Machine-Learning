@@ -24,31 +24,31 @@ We both do the it separetly and whenever both models are ready we can compare th
 	- Selecting some features by correlation
 	- Scale the features
 - Feb 20 - 21
-	*Apply KNN:
---- Prepare the AUPRC 
---- Apply KNN one and prepare AUPRC for that KNN
---- Repeat KNN for different neighbor numbers (a)
---- Return the best AUPRC and number of features for KNN (a)
---- Test the model on Test file
+	- Apply KNN:
+	- Prepare the AUPRC 
+	- Apply KNN one and prepare AUPRC for that KNN
+	- Repeat KNN for different neighbor numbers (a)
+	- Return the best AUPRC and number of features for KNN (a)
+	- Test the model on Test file
 - Feb 22 
--- Find two other methods for classification- ( Probably Linear SVC and Bayes)
--- Use CV for each to find best parameter
--- Calculate AUPRC for each
--- Test the model on Test file
+	- Find two other methods for classification- ( Probably Linear SVC and Bayes)
+	- Use CV for each to find best parameter
+	- Calculate AUPRC for each
+	- Test the model on Test file
 - Feb 22 
--- Test another model, like Ensemble or SVC
--- Test the model on Test file
--- Compare the result
+	- Test another model, like Ensemble or SVC
+	- Test the model on Test file
+	- Compare the result
 - Feb 23
--- *Extra Day*
+	- *Extra Day*
 - Feb 24
--- Ask the prof any question
--- Finalize the model
+	- Ask the prof any question
+	- Finalize the model
 - Feb 25
--- My Model is ready. Compare your model with mine whenever yours is ready
--- Apply CV on the model for reporting
+	- My Model is ready. Compare your model with mine whenever yours is ready
+	- Apply CV on the model for reporting
 - Feb 26 
--- Start the report
+	- Start the report
 - Feb 27
--- Finish the report. Done!
+	- Finish the report. Done!
  
