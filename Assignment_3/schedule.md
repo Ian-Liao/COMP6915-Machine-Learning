@@ -11,8 +11,7 @@ Feb 18 - Mar 8  Assignment 3
 - Feb Mar 7: write the documentation
 - Feb Mar 8: submit all the files***BEFORE DUE***
 
-### The grading will be based on the performance of the models(AUPRC) so if you develop your own and I do my own
-and at the end we can compare and each one is better get submitted.  
+### The grading will be based on the performance of the models(AUPRC) so if you develop your own and I do my own and at the end we can compare and each one is better get submitted.  
 If we need help from eachother in any part we can ask but I think doing it together is not a good idea.
 Last time we spend a long time reading eachothers code. So here is my suggestion:  
 
