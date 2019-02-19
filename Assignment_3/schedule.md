@@ -35,20 +35,21 @@ We both do the it separetly and whenever both models are ready we can compare th
 	- Use CV for each to find best parameter
 	- Calculate AUPRC for each
 	- Test the model on Test file
-- Feb 22 
+- Feb 23 
 	- Test another model, like Ensemble or SVC
 	- Test the model on Test file
 	- Compare the result
-- Feb 23
-	- *Extra Day*
 - Feb 24
 	- Ask the prof any question
 	- Finalize the model
 - Feb 25
+	- *Extra Day*
+
+- Feb 26
 	- My Model is ready. Compare your model with mine whenever yours is ready
 	- Apply CV on the model for reporting
-- Feb 26 
+- Feb 27 
 	- Start the report
-- Feb 27
+- Feb 28
 	- Finish the report. Done!
  
