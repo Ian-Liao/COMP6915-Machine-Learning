@@ -1,9 +1,9 @@
-1.Article A: A Unit Selection Methodology for Music Generation Using Deep NN
-2.Article B: Deep Learning for Music
-3.Article C: Music Generation by Deep Learning-Challenges and Directions
-4.Article D: Music Generation with Markov Models
-5.Article E: Music transcription modelling and composition using DL
-6.Article F: Text-based LSTM networks for Automatic Music Composition
+1. Article A: A Unit Selection Methodology for Music Generation Using Deep NN
+2. Article B: Deep Learning for Music
+3. Article C: Music Generation by Deep Learning-Challenges and Directions
+4. Article D: Music Generation with Markov Models
+5. Article E: Music transcription modelling and composition using DL
+6. Article F: Text-based LSTM networks for Automatic Music Composition
 
 # Objective
 
@@ -42,3 +42,8 @@
 - Article B: 2-layered LSTM-RNN/character level model
 - Article E: char-rnn & folk-rnn & three hidden layers LSTM
 - Article F: character- and word-based RNNs with LSTM units
+
+# Note
+
+- Since the structure of Article C and Article D is different from other articles, I didn't extract the headings from these articles.
+- The essential references are highlighted at the bottom of DL Techniques for Music Generation-A Survey.pdf.
