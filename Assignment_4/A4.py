@@ -218,7 +218,6 @@ for i in range(num_images):
     plot_prediction_image(i, predictions, y_test, X_test)
 plt.show()
 
-old_history= history
 
 """ plot the accuracy and loss for epochs"""
 plot_graph(history)
